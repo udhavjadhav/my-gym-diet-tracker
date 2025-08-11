@@ -52,6 +52,11 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				// Fitness-specific colors
+				water: 'hsl(var(--water))',
+				protein: 'hsl(var(--protein))',
+				calories: 'hsl(var(--calories))',
+				workout: 'hsl(var(--workout))',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
