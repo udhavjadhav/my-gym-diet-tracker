@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,23 +8,46 @@ import { useLocalStorage } from "@/hooks/useStorage";
 import { UserSettings } from "@/types/fitness";
 import { Settings as SettingsIcon, Bell, Target, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { NotificationService } from "@/services/notifications";
 
 export const Settings = () => {
   const [settings, setSettings] = useLocalStorage<UserSettings>('userSettings', {
     goals: { water: 2000, protein: 150, calories: 2000 },
-    notifications: { water: true, protein: true, waterInterval: 1, proteinTimes: ['08:00', '12:00', '18:00'] }
+    notifications: { water: true, protein: true, gym: true, waterInterval: 1, proteinTimes: ['08:00', '12:00', '18:00'] }
   });
 
   const [tempSettings, setTempSettings] = useState(settings);
   const { toast } = useToast();
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setSettings(tempSettings);
+    
+    // Handle gym notifications
+    if (tempSettings.notifications.gym) {
+      const hasPermission = await NotificationService.requestPermissions();
+      if (hasPermission) {
+        await NotificationService.scheduleGymReminders();
+      }
+    } else {
+      await NotificationService.cancelGymReminders();
+    }
+    
     toast({
       title: "Settings saved! ✓",
       description: "Your preferences have been updated",
     });
   };
+
+  useEffect(() => {
+    // Setup notifications on component mount if enabled
+    if (settings.notifications.gym) {
+      NotificationService.requestPermissions().then(hasPermission => {
+        if (hasPermission) {
+          NotificationService.scheduleGymReminders();
+        }
+      });
+    }
+  }, []);
 
   const updateGoal = (key: keyof typeof tempSettings.goals, value: string) => {
     const numValue = parseInt(value) || 0;
@@ -121,6 +144,18 @@ export const Settings = () => {
               id="protein-notifications"
               checked={tempSettings.notifications.protein}
               onCheckedChange={(checked) => updateNotification('protein', checked)}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <Label htmlFor="gym-notifications">Gym Reminders</Label>
+              <p className="text-sm text-muted-foreground">Daily reminder at 6:15 PM (Mon-Sat)</p>
+            </div>
+            <Switch
+              id="gym-notifications"
+              checked={tempSettings.notifications.gym}
+              onCheckedChange={(checked) => updateNotification('gym', checked)}
             />
           </div>
 

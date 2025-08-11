@@ -13,7 +13,7 @@ export const ProteinTracker = () => {
   const [proteinLogs, setProteinLogs] = useLocalStorage<ProteinLog[]>('proteinLogs', []);
   const [settings] = useLocalStorage<UserSettings>('userSettings', {
     goals: { water: 2000, protein: 150, calories: 2000 },
-    notifications: { water: true, protein: true, waterInterval: 1, proteinTimes: ['08:00', '12:00', '18:00'] }
+    notifications: { water: true, protein: true, gym: true, waterInterval: 1, proteinTimes: ['08:00', '12:00', '18:00'] }
   });
   const [customAmount, setCustomAmount] = useState('');
   const [source, setSource] = useState('');

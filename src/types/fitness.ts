@@ -41,11 +41,21 @@ export interface DailyGoals {
   calories: number;
 }
 
+export interface GymLog {
+  id: string;
+  date: string; // YYYY-MM-DD
+  attended: boolean;
+  exercises?: WorkoutLog[];
+  notes?: string;
+  timestamp: string;
+}
+
 export interface UserSettings {
   goals: DailyGoals;
   notifications: {
     water: boolean;
     protein: boolean;
+    gym: boolean;
     waterInterval: number; // hours
     proteinTimes: string[]; // HH:MM format
   };

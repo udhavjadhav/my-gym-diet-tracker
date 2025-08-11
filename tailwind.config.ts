@@ -57,6 +57,8 @@ export default {
 				protein: 'hsl(var(--protein))',
 				calories: 'hsl(var(--calories))',
 				workout: 'hsl(var(--workout))',
+				success: 'hsl(var(--success))',
+				"success-foreground": 'hsl(var(--success-foreground))',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
