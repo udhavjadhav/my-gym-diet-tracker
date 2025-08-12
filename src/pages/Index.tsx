@@ -11,7 +11,7 @@ import { useLocalStorage } from "@/hooks/useStorage";
 import { UserProfile } from "@/types/fitness";
 import { Home, Droplets, Zap, Calendar, Dumbbell, User } from "lucide-react";
 
-type TabType = 'dashboard' | 'water' | 'protein' | 'gym' | 'workout' | 'profile';
+type TabType = 'dashboard' | 'water' | 'protein' | 'workout' | 'profile';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
@@ -30,8 +30,6 @@ const Index = () => {
         return <WaterTracker />;
       case 'protein':
         return <ProteinTracker />;
-      case 'gym':
-        return <GymCalendar />;
       case 'workout':
         return <WorkoutTracker />;
       case 'profile':
@@ -51,7 +49,7 @@ const Index = () => {
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border">
         <div className="max-w-md mx-auto">
-          <div className="grid grid-cols-6 gap-1">
+          <div className="grid grid-cols-5 gap-1">
             <NavButton 
               icon={<Home className="w-5 h-5" />}
               label="Home"
@@ -69,12 +67,6 @@ const Index = () => {
               label="Protein"
               isActive={activeTab === 'protein'}
               onClick={() => setActiveTab('protein')}
-            />
-            <NavButton 
-              icon={<Calendar className="w-5 h-5" />}
-              label="Gym"
-              isActive={activeTab === 'gym'}
-              onClick={() => setActiveTab('gym')}
             />
             <NavButton 
               icon={<Dumbbell className="w-5 h-5" />}

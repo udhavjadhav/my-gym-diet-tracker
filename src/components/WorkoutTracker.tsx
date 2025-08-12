@@ -6,9 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useLocalStorage } from "@/hooks/useStorage";
 import { WorkoutTemplate, WorkoutSession, Exercise, CompletedExercise } from "@/types/fitness";
-import { Dumbbell, Plus, Edit3, Save, Play, CheckCircle, Calendar } from "lucide-react";
+import { Dumbbell, Plus, Edit3, Save, Play, CheckCircle, Calendar, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { GymCalendar } from "@/components/GymCalendar";
 
 const defaultWorkoutTemplates: WorkoutTemplate[] = [
   {
@@ -103,6 +104,7 @@ export const WorkoutTracker = () => {
   const [workoutSessions, setWorkoutSessions] = useLocalStorage<WorkoutSession[]>('workoutSessions', []);
   const [editingTemplate, setEditingTemplate] = useState<string | null>(null);
   const [activeWorkout, setActiveWorkout] = useState<WorkoutSession | null>(null);
+  const [currentView, setCurrentView] = useState<'main' | 'attendance'>('main');
   const { toast } = useToast();
 
   const today = new Date();
@@ -272,11 +274,42 @@ export const WorkoutTracker = () => {
     );
   }
 
+  if (currentView === 'attendance') {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setCurrentView('main')}
+            className="p-1"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <Calendar className="w-6 h-6 text-primary" />
+          <h1 className="text-2xl font-bold text-foreground">Gym Attendance</h1>
+        </div>
+        <GymCalendar />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <Dumbbell className="w-6 h-6 text-primary" />
-        <h1 className="text-2xl font-bold text-foreground">Workout Tracker</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Dumbbell className="w-6 h-6 text-primary" />
+          <h1 className="text-2xl font-bold text-foreground">Workout Tracker</h1>
+        </div>
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={() => setCurrentView('attendance')}
+          className="flex items-center gap-2"
+        >
+          <Calendar className="w-4 h-4" />
+          Gym Attendance
+        </Button>
       </div>
 
       {/* Today's Workout */}
