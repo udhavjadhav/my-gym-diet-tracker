@@ -1,16 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dashboard } from "@/components/Dashboard";
 import { WaterTracker } from "@/components/WaterTracker";
 import { ProteinTracker } from "@/components/ProteinTracker";
 import { GymCalendar } from "@/components/GymCalendar";
-import { Settings } from "@/components/Settings";
+import { WorkoutTracker } from "@/components/WorkoutTracker";
+import { Profile } from "@/components/Profile";
+import { Registration } from "@/components/Registration";
 import { NavButton } from "@/components/NavButton";
-import { Home, Droplets, Zap, Calendar, Settings as SettingsIcon } from "lucide-react";
+import { useLocalStorage } from "@/hooks/useStorage";
+import { UserProfile } from "@/types/fitness";
+import { Home, Droplets, Zap, Calendar, Dumbbell, User } from "lucide-react";
 
-type TabType = 'dashboard' | 'water' | 'protein' | 'gym' | 'settings';
+type TabType = 'dashboard' | 'water' | 'protein' | 'gym' | 'workout' | 'profile';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
+  const [userProfile, setUserProfile] = useLocalStorage<UserProfile | null>('userProfile', null);
+
+  // Show registration if no user profile exists
+  if (!userProfile) {
+    return <Registration onComplete={setUserProfile} />;
+  }
 
   const renderContent = () => {
     switch (activeTab) {
@@ -22,8 +32,10 @@ const Index = () => {
         return <ProteinTracker />;
       case 'gym':
         return <GymCalendar />;
-      case 'settings':
-        return <Settings />;
+      case 'workout':
+        return <WorkoutTracker />;
+      case 'profile':
+        return <Profile userProfile={userProfile} onUpdateProfile={setUserProfile} />;
       default:
         return <Dashboard />;
     }
@@ -39,7 +51,7 @@ const Index = () => {
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border">
         <div className="max-w-md mx-auto">
-          <div className="grid grid-cols-5 gap-1">
+          <div className="grid grid-cols-6 gap-1">
             <NavButton 
               icon={<Home className="w-5 h-5" />}
               label="Home"
@@ -65,10 +77,16 @@ const Index = () => {
               onClick={() => setActiveTab('gym')}
             />
             <NavButton 
-              icon={<SettingsIcon className="w-5 h-5" />}
-              label="Settings"
-              isActive={activeTab === 'settings'}
-              onClick={() => setActiveTab('settings')}
+              icon={<Dumbbell className="w-5 h-5" />}
+              label="Workout"
+              isActive={activeTab === 'workout'}
+              onClick={() => setActiveTab('workout')}
+            />
+            <NavButton 
+              icon={<User className="w-5 h-5" />}
+              label="Profile"
+              isActive={activeTab === 'profile'}
+              onClick={() => setActiveTab('profile')}
             />
           </div>
         </div>

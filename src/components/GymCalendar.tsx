@@ -81,14 +81,53 @@ export const GymCalendar = () => {
 
   const selectedLog = selectedDate ? getGymLogForDate(selectedDate) : null;
 
+  const attendanceStats = () => {
+    const thisMonth = gymLogs.filter(log => log.date.startsWith(format(currentMonth, 'yyyy-MM')));
+    const attended = thisMonth.filter(log => log.attended).length;
+    const total = thisMonth.length;
+    const percentage = total > 0 ? Math.round((attended / total) * 100) : 0;
+    
+    return { attended, total, percentage };
+  };
+
+  const stats = attendanceStats();
+
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Gym Calendar</h1>
-        <p className="text-muted-foreground">Track your gym attendance</p>
+        <h1 className="text-2xl font-bold text-foreground mb-2">Gym Attendance</h1>
+        <p className="text-muted-foreground">Track your fitness journey</p>
+      </div>
+
+      {/* Monthly Stats */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-card rounded-xl p-4 text-center border border-border">
+          <p className="text-2xl font-bold text-success">{stats.attended}</p>
+          <p className="text-sm text-muted-foreground">Attended</p>
+        </div>
+        <div className="bg-card rounded-xl p-4 text-center border border-border">
+          <p className="text-2xl font-bold text-destructive">{stats.total - stats.attended}</p>
+          <p className="text-sm text-muted-foreground">Missed</p>
+        </div>
+        <div className="bg-card rounded-xl p-4 text-center border border-border">
+          <p className="text-2xl font-bold text-primary">{stats.percentage}%</p>
+          <p className="text-sm text-muted-foreground">Success Rate</p>
+        </div>
       </div>
 
       <div className="bg-card rounded-2xl p-6 border border-border">
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-foreground mb-2">
+            {format(currentMonth, 'MMMM yyyy')}
+          </h3>
+          <div className="w-full bg-muted rounded-full h-2">
+            <div 
+              className="bg-success h-2 rounded-full transition-all duration-500"
+              style={{ width: `${stats.percentage}%` }}
+            />
+          </div>
+        </div>
+        
         <Calendar
           mode="single"
           selected={selectedDate}

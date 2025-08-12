@@ -50,6 +50,55 @@ export interface GymLog {
   timestamp: string;
 }
 
+export interface UserProfile {
+  name: string;
+  age: number;
+  weight: number; // kg
+  height: number; // cm
+  gender: 'male' | 'female';
+  activityLevel: 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active';
+  createdAt: string;
+}
+
+export interface WorkoutTemplate {
+  id: string;
+  day: string;
+  name: string;
+  muscleGroups: string[];
+  exercises: Exercise[];
+}
+
+export interface Exercise {
+  id: string;
+  name: string;
+  sets: number;
+  reps: string; // e.g., "8-12" or "15"
+  weight?: number;
+  notes?: string;
+}
+
+export interface WorkoutSession {
+  id: string;
+  templateId: string;
+  date: string;
+  exercises: CompletedExercise[];
+  duration?: number; // minutes
+  notes?: string;
+  timestamp: string;
+}
+
+export interface CompletedExercise {
+  exerciseId: string;
+  name: string;
+  sets: CompletedSet[];
+}
+
+export interface CompletedSet {
+  reps: number;
+  weight?: number;
+  completed: boolean;
+}
+
 export interface UserSettings {
   goals: DailyGoals;
   notifications: {
