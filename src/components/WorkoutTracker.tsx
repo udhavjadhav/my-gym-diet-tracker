@@ -403,7 +403,7 @@ export const WorkoutTracker = () => {
       <div className="space-y-4">
         <h2 className="text-2xl font-bold text-foreground mb-6">Weekly Schedule</h2>
         
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {workoutTemplates.map((template) => (
             <Card key={template.id} className="overflow-hidden group hover:shadow-lg transition-all duration-300">
               <div 
