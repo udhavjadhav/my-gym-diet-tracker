@@ -17,8 +17,8 @@ export const NavButton = ({ icon, label, isActive, onClick, className }: NavButt
       className={cn(
         "flex flex-col items-center gap-1 h-16 text-xs font-medium transition-all duration-300",
         isActive 
-          ? "bg-primary/20 text-primary border-t-2 border-primary" 
-          : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
+          ? "text-primary" 
+          : "text-muted-foreground hover:text-foreground",
         className
       )}
     >

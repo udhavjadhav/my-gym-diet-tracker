@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 export const WaterTracker = () => {
   const [waterLogs, setWaterLogs] = useLocalStorage<WaterLog[]>('waterLogs', []);
   const [settings] = useLocalStorage<UserSettings>('userSettings', {
-    goals: { water: 2000, protein: 150, calories: 2000 },
+    goals: { water: 4000, protein: 150, calories: 2000 },
     notifications: { water: true, protein: true, gym: true, waterInterval: 1, proteinTimes: ['08:00', '12:00', '18:00'] }
   });
   const [customAmount, setCustomAmount] = useState('');
@@ -133,6 +133,7 @@ export const WaterTracker = () => {
             value={customAmount}
             onChange={(e) => setCustomAmount(e.target.value)}
             className="flex-1"
+            onFocus={(e) => e.target.select()}
           />
           <Button 
             onClick={handleCustomAdd}

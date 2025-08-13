@@ -12,7 +12,7 @@ import { NotificationService } from "@/services/notifications";
 
 export const Settings = () => {
   const [settings, setSettings] = useLocalStorage<UserSettings>('userSettings', {
-    goals: { water: 2000, protein: 150, calories: 2000 },
+    goals: { water: 4000, protein: 150, calories: 2000 },
     notifications: { water: true, protein: true, gym: true, waterInterval: 1, proteinTimes: ['08:00', '12:00', '18:00'] }
   });
 
@@ -85,9 +85,10 @@ export const Settings = () => {
             <Input
               id="water-goal"
               type="number"
-              value={tempSettings.goals.water}
+              value={tempSettings.goals.water || ''}
               onChange={(e) => updateGoal('water', e.target.value)}
-              placeholder="2000"
+              placeholder="4000"
+              onFocus={(e) => e.target.select()}
             />
           </div>
           
@@ -96,9 +97,10 @@ export const Settings = () => {
             <Input
               id="protein-goal"
               type="number"
-              value={tempSettings.goals.protein}
+              value={tempSettings.goals.protein || ''}
               onChange={(e) => updateGoal('protein', e.target.value)}
               placeholder="150"
+              onFocus={(e) => e.target.select()}
             />
           </div>
           
@@ -107,9 +109,10 @@ export const Settings = () => {
             <Input
               id="calories-goal"
               type="number"
-              value={tempSettings.goals.calories}
+              value={tempSettings.goals.calories || ''}
               onChange={(e) => updateGoal('calories', e.target.value)}
               placeholder="2000"
+              onFocus={(e) => e.target.select()}
             />
           </div>
         </div>
@@ -167,8 +170,9 @@ export const Settings = () => {
                 type="number"
                 min="1"
                 max="12"
-                value={tempSettings.notifications.waterInterval}
+                value={tempSettings.notifications.waterInterval || ''}
                 onChange={(e) => updateNotification('waterInterval', parseInt(e.target.value) || 1)}
+                onFocus={(e) => e.target.select()}
               />
             </div>
           )}

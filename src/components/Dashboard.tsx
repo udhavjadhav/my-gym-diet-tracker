@@ -1,6 +1,6 @@
 import { StatCard } from "./StatCard";
 import { useLocalStorage } from "@/hooks/useStorage";
-import { WaterLog, ProteinLog, MealLog, UserSettings } from "@/types/fitness";
+import { WaterLog, ProteinLog, MealLog, UserSettings, WorkoutSession } from "@/types/fitness";
 import { Droplets, Zap, Utensils, Dumbbell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import gymHero from "@/assets/gym-hero.jpg";
@@ -9,8 +9,9 @@ export const Dashboard = () => {
   const [waterLogs, setWaterLogs] = useLocalStorage<WaterLog[]>('waterLogs', []);
   const [proteinLogs, setProteinLogs] = useLocalStorage<ProteinLog[]>('proteinLogs', []);
   const [mealLogs] = useLocalStorage<MealLog[]>('mealLogs', []);
+  const [workoutSessions] = useLocalStorage<WorkoutSession[]>('workoutSessions', []);
   const [settings] = useLocalStorage<UserSettings>('userSettings', {
-    goals: { water: 2000, protein: 150, calories: 2000 },
+    goals: { water: 4000, protein: 150, calories: 2000 },
     notifications: { water: true, protein: true, gym: true, waterInterval: 1, proteinTimes: ['08:00', '12:00', '18:00'] }
   });
   const { toast } = useToast();
@@ -28,6 +29,9 @@ export const Dashboard = () => {
   const todayCalories = mealLogs
     .filter(log => log.date === today)
     .reduce((sum, log) => sum + log.calories, 0);
+    
+  const todayWorkouts = workoutSessions
+    .filter(session => session.date === today).length;
 
   const addWater = (amount: number) => {
     const newLog: WaterLog = {
@@ -111,7 +115,7 @@ export const Dashboard = () => {
         
         <StatCard
           title="Workouts"
-          current={0}
+          current={todayWorkouts}
           goal={1}
           unit="sessions"
           color="workout"
