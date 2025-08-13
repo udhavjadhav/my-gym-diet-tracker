@@ -1,15 +1,21 @@
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useLocalStorage } from "@/hooks/useStorage";
 import { WorkoutTemplate, WorkoutSession, Exercise, CompletedExercise } from "@/types/fitness";
-import { Dumbbell, Plus, Edit3, Save, Play, CheckCircle, Calendar, ArrowLeft } from "lucide-react";
+import { Dumbbell, Plus, Edit3, Save, Play, CheckCircle, Calendar, ArrowLeft, Target, Clock, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { GymCalendar } from "@/components/GymCalendar";
+
+// Import workout images
+import chestTricepsImg from "@/assets/chest-triceps.jpg";
+import backBicepsImg from "@/assets/back-biceps.jpg";
+import legsShoulders from "@/assets/legs-shoulders.jpg";
+import restDayImg from "@/assets/rest-day.jpg";
 
 const defaultWorkoutTemplates: WorkoutTemplate[] = [
   {
@@ -98,6 +104,24 @@ const defaultWorkoutTemplates: WorkoutTemplate[] = [
     exercises: []
   }
 ];
+
+// Helper function to get workout image
+const getWorkoutImage = (workoutName: string) => {
+  if (workoutName.includes('Chest') || workoutName.includes('Tricep')) return chestTricepsImg;
+  if (workoutName.includes('Back') || workoutName.includes('Bicep')) return backBicepsImg;
+  if (workoutName.includes('Legs') || workoutName.includes('Shoulder')) return legsShoulders;
+  if (workoutName.includes('Rest')) return restDayImg;
+  return chestTricepsImg; // fallback
+};
+
+// Helper function to get muscle group color
+const getMuscleGroupColor = (workoutName: string) => {
+  if (workoutName.includes('Chest') || workoutName.includes('Tricep')) return 'from-orange-500/20 to-red-500/20';
+  if (workoutName.includes('Back') || workoutName.includes('Bicep')) return 'from-blue-500/20 to-purple-500/20';
+  if (workoutName.includes('Legs') || workoutName.includes('Shoulder')) return 'from-green-500/20 to-teal-500/20';
+  if (workoutName.includes('Rest')) return 'from-gray-500/20 to-slate-500/20';
+  return 'from-primary/20 to-accent/20';
+};
 
 export const WorkoutTracker = () => {
   const [workoutTemplates, setWorkoutTemplates] = useLocalStorage<WorkoutTemplate[]>('workoutTemplates', defaultWorkoutTemplates);
@@ -314,142 +338,234 @@ export const WorkoutTracker = () => {
 
       {/* Today's Workout */}
       {todayTemplate && (
-        <Card className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-xl font-semibold">Today's Workout</h2>
-              <p className="text-muted-foreground">{todayTemplate.name}</p>
+        <Card className="overflow-hidden">
+          <div 
+            className={`relative h-40 bg-gradient-to-br ${getMuscleGroupColor(todayTemplate.name)} flex items-center justify-center`}
+            style={{
+              backgroundImage: `url(${getWorkoutImage(todayTemplate.name)})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
+            <div className="absolute inset-0 bg-black/50" />
+            <div className="relative z-10 text-center text-white">
+              <Target className="w-8 h-8 mx-auto mb-2" />
+              <h2 className="text-2xl font-bold">Today's Workout</h2>
+              <p className="text-white/90">{todayTemplate.name}</p>
             </div>
-            {todayTemplate.exercises.length > 0 && (
-              <Button onClick={() => startWorkout(todayTemplate)}>
-                <Play className="w-4 h-4 mr-2" />
-                Start Workout
-              </Button>
-            )}
           </div>
           
-          {todayTemplate.exercises.length === 0 ? (
-            <p className="text-center text-muted-foreground py-8">🎉 Rest Day - Enjoy your recovery!</p>
-          ) : (
-            <div className="space-y-2">
-              {todayTemplate.exercises.map((exercise, index) => (
-                <div key={exercise.id} className="flex justify-between items-center p-3 bg-muted/30 rounded-lg">
-                  <div>
-                    <p className="font-medium">{exercise.name}</p>
-                    <p className="text-sm text-muted-foreground">{exercise.sets} sets × {exercise.reps} reps</p>
+          <CardContent className="p-6">
+            {todayTemplate.exercises.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="text-6xl mb-4">🧘‍♂️</div>
+                <h3 className="text-xl font-semibold mb-2">Rest Day</h3>
+                <p className="text-muted-foreground">Take time to recover and relax. Your muscles need this!</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">
+                      {todayTemplate.exercises.length} exercises • Est. {todayTemplate.exercises.length * 5}min
+                    </span>
                   </div>
+                  <Button onClick={() => startWorkout(todayTemplate)} size="lg" className="px-8">
+                    <Play className="w-4 h-4 mr-2" />
+                    Start Workout
+                  </Button>
                 </div>
-              ))}
-            </div>
-          )}
+                
+                <div className="grid gap-3">
+                  {todayTemplate.exercises.map((exercise, index) => (
+                    <div key={exercise.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border/50 hover:bg-muted/50 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">
+                          {index + 1}
+                        </div>
+                        <div>
+                          <p className="font-medium">{exercise.name}</p>
+                          <p className="text-sm text-muted-foreground">{exercise.sets} sets × {exercise.reps} reps</p>
+                        </div>
+                      </div>
+                      <TrendingUp className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </CardContent>
         </Card>
       )}
 
       {/* Weekly Schedule */}
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-4">Weekly Schedule</h2>
+      <div className="space-y-4">
+        <h2 className="text-2xl font-bold text-foreground mb-6">Weekly Schedule</h2>
         
-        <div className="space-y-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {workoutTemplates.map((template) => (
-            <div key={template.id} className="border border-border rounded-lg p-4">
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <h3 className="font-semibold">{template.day}</h3>
-                  <p className="text-sm text-muted-foreground">{template.name}</p>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setEditingTemplate(editingTemplate === template.id ? null : template.id)}
-                  >
-                    <Edit3 className="w-4 h-4" />
-                  </Button>
-                  {template.exercises.length > 0 && (
-                    <Button
-                      size="sm"
-                      onClick={() => startWorkout(template)}
-                    >
-                      <Play className="w-4 h-4" />
-                    </Button>
-                  )}
+            <Card key={template.id} className="overflow-hidden group hover:shadow-lg transition-all duration-300">
+              <div 
+                className={`relative h-32 bg-gradient-to-br ${getMuscleGroupColor(template.name)} flex items-center justify-center`}
+                style={{
+                  backgroundImage: `url(${getWorkoutImage(template.name)})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              >
+                <div className="absolute inset-0 bg-black/40" />
+                <div className="relative z-10 text-center text-white">
+                  <h3 className="text-lg font-bold">{template.day}</h3>
+                  <p className="text-white/90 text-sm">{template.name}</p>
                 </div>
               </div>
-
-              {editingTemplate === template.id && (
-                <div className="space-y-4 mt-4 border-t border-border pt-4">
-                  {template.exercises.map((exercise) => (
-                    <div key={exercise.id} className="grid grid-cols-1 md:grid-cols-4 gap-2">
-                      <Input
-                        value={exercise.name}
-                        onChange={(e) => updateExercise(template.id, exercise.id, { name: e.target.value })}
-                        placeholder="Exercise name"
-                      />
-                      <Input
-                        type="number"
-                        value={exercise.sets}
-                        onChange={(e) => updateExercise(template.id, exercise.id, { sets: parseInt(e.target.value) || 0 })}
-                        placeholder="Sets"
-                      />
-                      <Input
-                        value={exercise.reps}
-                        onChange={(e) => updateExercise(template.id, exercise.id, { reps: e.target.value })}
-                        placeholder="Reps"
-                      />
-                      <Input
-                        type="number"
-                        value={exercise.weight || ''}
-                        onChange={(e) => updateExercise(template.id, exercise.id, { weight: parseFloat(e.target.value) || undefined })}
-                        placeholder="Weight (kg)"
-                      />
-                    </div>
-                  ))}
-                  
-                  <Button
-                    variant="outline"
-                    onClick={() => addExercise(template.id)}
-                    className="w-full"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Exercise
-                  </Button>
+              
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">
+                      {template.exercises.length} exercises
+                    </span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setEditingTemplate(editingTemplate === template.id ? null : template.id)}
+                    >
+                      <Edit3 className="w-4 h-4" />
+                    </Button>
+                    {template.exercises.length > 0 && (
+                      <Button
+                        size="sm"
+                        onClick={() => startWorkout(template)}
+                      >
+                        <Play className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
                 </div>
-              )}
 
-              {editingTemplate !== template.id && template.exercises.length > 0 && (
-                <div className="space-y-1">
-                  {template.exercises.map((exercise) => (
-                    <div key={exercise.id} className="text-sm text-muted-foreground">
-                      {exercise.name} - {exercise.sets} sets × {exercise.reps}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                {editingTemplate === template.id && (
+                  <div className="space-y-3 mt-4 border-t border-border pt-4">
+                    {template.exercises.map((exercise) => (
+                      <div key={exercise.id} className="grid grid-cols-2 gap-2">
+                        <Input
+                          value={exercise.name}
+                          onChange={(e) => updateExercise(template.id, exercise.id, { name: e.target.value })}
+                          placeholder="Exercise name"
+                          className="col-span-2"
+                        />
+                        <Input
+                          type="number"
+                          value={exercise.sets}
+                          onChange={(e) => updateExercise(template.id, exercise.id, { sets: parseInt(e.target.value) || 0 })}
+                          placeholder="Sets"
+                        />
+                        <Input
+                          value={exercise.reps}
+                          onChange={(e) => updateExercise(template.id, exercise.id, { reps: e.target.value })}
+                          placeholder="Reps"
+                        />
+                      </div>
+                    ))}
+                    
+                    <Button
+                      variant="outline"
+                      onClick={() => addExercise(template.id)}
+                      className="w-full"
+                      size="sm"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Exercise
+                    </Button>
+                  </div>
+                )}
+
+                {editingTemplate !== template.id && (
+                  <div className="space-y-2">
+                    {template.exercises.length === 0 ? (
+                      <div className="text-center py-4">
+                        <p className="text-2xl mb-2">😴</p>
+                        <p className="text-sm text-muted-foreground">Rest & Recovery</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-1 max-h-32 overflow-y-auto">
+                        {template.exercises.slice(0, 3).map((exercise, index) => (
+                          <div key={exercise.id} className="text-xs text-muted-foreground bg-muted/30 rounded px-2 py-1">
+                            {exercise.name} - {exercise.sets}×{exercise.reps}
+                          </div>
+                        ))}
+                        {template.exercises.length > 3 && (
+                          <div className="text-xs text-muted-foreground text-center py-1">
+                            +{template.exercises.length - 3} more exercises
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           ))}
         </div>
-      </Card>
+      </div>
 
       {/* Recent Sessions */}
       {workoutSessions.length > 0 && (
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Recent Sessions</h2>
-          <div className="space-y-3">
-            {workoutSessions.slice(-5).reverse().map((session) => {
-              const template = workoutTemplates.find(t => t.id === session.templateId);
-              return (
-                <div key={session.id} className="flex justify-between items-center p-3 bg-muted/30 rounded-lg">
-                  <div>
-                    <p className="font-medium">{template?.name}</p>
-                    <p className="text-sm text-muted-foreground">{format(new Date(session.date), 'MMM d, yyyy')}</p>
+        <Card className="overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-primary/10 to-accent/10">
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-primary" />
+              Recent Sessions
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid gap-3">
+              {workoutSessions.slice(-5).reverse().map((session) => {
+                const template = workoutTemplates.find(t => t.id === session.templateId);
+                const completedSets = session.exercises.reduce((total, ex) => 
+                  total + ex.sets.filter(set => set.completed).length, 0
+                );
+                const totalSets = session.exercises.reduce((total, ex) => 
+                  total + ex.sets.length, 0
+                );
+                
+                return (
+                  <div key={session.id} className="flex items-center justify-between p-4 bg-muted/20 rounded-lg border border-border/50 hover:bg-muted/30 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-12 h-12 rounded-lg bg-cover bg-center flex items-center justify-center"
+                        style={{
+                          backgroundImage: `url(${getWorkoutImage(template?.name || '')})`,
+                        }}
+                      >
+                        <div className="w-full h-full bg-black/50 rounded-lg flex items-center justify-center">
+                          <CheckCircle className="w-6 h-6 text-white" />
+                        </div>
+                      </div>
+                      <div>
+                        <p className="font-medium">{template?.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {format(new Date(session.date), 'MMM d, yyyy')} • {session.exercises.length} exercises
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm font-medium text-primary">
+                        {completedSets}/{totalSets} sets
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {Math.round((completedSets / totalSets) * 100)}% completed
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-right text-sm text-muted-foreground">
-                    {session.exercises.length} exercises
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          </CardContent>
         </Card>
       )}
     </div>
