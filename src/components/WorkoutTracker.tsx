@@ -15,7 +15,7 @@ import { GymCalendar } from "@/components/GymCalendar";
 import chestTricepsImg from "@/assets/chest-triceps.jpg";
 import backBicepsImg from "@/assets/back-biceps.jpg";
 import legsShoulders from "@/assets/legs-shoulders.jpg";
-import restDayImg from "@/assets/rest-day.jpg";
+import restDayImg from "@/assets/rest-day-men.jpg";
 
 const defaultWorkoutTemplates: WorkoutTemplate[] = [
   {
@@ -323,7 +323,7 @@ export const WorkoutTracker = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Dumbbell className="w-6 h-6 text-primary" />
-          <h1 className="text-2xl font-bold text-foreground">Workout Tracker</h1>
+          <h1 className="text-2xl font-bold text-foreground">Workout</h1>
         </div>
         <Button 
           variant="outline" 
@@ -371,7 +371,7 @@ export const WorkoutTracker = () => {
                       {todayTemplate.exercises.length} exercises • Est. {todayTemplate.exercises.length * 5}min
                     </span>
                   </div>
-                  <Button onClick={() => startWorkout(todayTemplate)} size="lg" className="px-8">
+                  <Button onClick={() => startWorkout(todayTemplate)} size="lg" className="px-6 shrink-0">
                     <Play className="w-4 h-4 mr-2" />
                     Start Workout
                   </Button>
