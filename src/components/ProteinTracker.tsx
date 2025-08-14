@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { QuickAddButton } from "./QuickAddButton";
 import { ProgressCircle } from "./ProgressCircle";
 import { useLocalStorage } from "@/hooks/useStorage";
 import { ProteinLog, UserSettings } from "@/types/fitness";
-import { Zap, Plus } from "lucide-react";
+import { foodDatabase, FoodItem } from "@/data/foodDatabase";
+import { Zap, Plus, Calculator } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export const ProteinTracker = () => {
@@ -17,6 +19,8 @@ export const ProteinTracker = () => {
   });
   const [customAmount, setCustomAmount] = useState('');
   const [source, setSource] = useState('');
+  const [selectedFood, setSelectedFood] = useState<string>('');
+  const [quantity, setQuantity] = useState('');
   const { toast } = useToast();
 
   const today = new Date().toISOString().split('T')[0];
@@ -58,6 +62,32 @@ export const ProteinTracker = () => {
       setCustomAmount('');
       setSource('');
     }
+  };
+
+  const handleFoodAdd = () => {
+    const selectedFoodItem = foodDatabase.find(food => food.id === selectedFood);
+    const qty = parseFloat(quantity);
+    
+    if (selectedFoodItem && qty > 0) {
+      const calculatedProtein = Math.round(selectedFoodItem.protein * qty);
+      addProtein(calculatedProtein, `${qty} ${selectedFoodItem.unit} ${selectedFoodItem.name}`);
+      setSelectedFood('');
+      setQuantity('');
+    }
+  };
+
+  const getSelectedFoodItem = (): FoodItem | null => {
+    return foodDatabase.find(food => food.id === selectedFood) || null;
+  };
+
+  const calculatePreviewProtein = (): number => {
+    const selectedFoodItem = getSelectedFoodItem();
+    const qty = parseFloat(quantity);
+    
+    if (selectedFoodItem && qty > 0) {
+      return Math.round(selectedFoodItem.protein * qty);
+    }
+    return 0;
   };
 
   const todayLogs = proteinLogs
@@ -126,9 +156,72 @@ export const ProteinTracker = () => {
         </div>
       </div>
 
+      {/* Smart Food Calculator */}
+      <div className="space-y-3">
+        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+          <Calculator className="w-5 h-5 text-protein" />
+          Smart Food Calculator
+        </h3>
+        <div className="space-y-3">
+          <Select value={selectedFood} onValueChange={setSelectedFood}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select food item" />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(
+                foodDatabase.reduce((acc, food) => {
+                  if (!acc[food.category]) acc[food.category] = [];
+                  acc[food.category].push(food);
+                  return acc;
+                }, {} as Record<string, FoodItem[]>)
+              ).map(([category, foods]) => (
+                <div key={category}>
+                  <div className="px-2 py-1 text-sm font-semibold text-muted-foreground">
+                    {category}
+                  </div>
+                  {foods.map((food) => (
+                    <SelectItem key={food.id} value={food.id}>
+                      {food.name} ({food.protein}g per {food.unit})
+                    </SelectItem>
+                  ))}
+                </div>
+              ))}
+            </SelectContent>
+          </Select>
+          
+          {selectedFood && (
+            <div className="flex gap-2">
+              <Input
+                type="number"
+                placeholder="Quantity"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                onFocus={(e) => e.target.select()}
+                className="flex-1"
+              />
+              <Button 
+                onClick={handleFoodAdd}
+                disabled={!selectedFood || !quantity || parseFloat(quantity) <= 0}
+                className="bg-gradient-to-r from-protein to-protein/80 hover:from-protein/80 hover:to-protein/60"
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
+          
+          {selectedFood && quantity && parseFloat(quantity) > 0 && (
+            <div className="p-3 rounded-lg bg-protein/10 border border-protein/20">
+              <div className="text-sm text-foreground">
+                <strong>{calculatePreviewProtein()}g protein</strong> from {quantity} {getSelectedFoodItem()?.unit} {getSelectedFoodItem()?.name}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Custom Amount */}
       <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-foreground">Custom Entry</h3>
+        <h3 className="text-lg font-semibold text-foreground">Manual Entry</h3>
         <div className="space-y-3">
           <Input
             type="text"
@@ -142,6 +235,7 @@ export const ProteinTracker = () => {
               placeholder="Enter grams"
               value={customAmount}
               onChange={(e) => setCustomAmount(e.target.value)}
+              onFocus={(e) => e.target.select()}
               className="flex-1"
             />
             <Button 
