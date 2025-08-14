@@ -142,15 +142,55 @@ export const ProteinTracker = () => {
             variant="protein"
           />
           <QuickAddButton 
-            value={30} 
+            value={31} 
             unit="g chicken" 
-            onClick={(value) => addProtein(value, 'Chicken breast')}
+            onClick={(value) => addProtein(value, 'Chicken breast (100g)')}
             variant="protein"
           />
           <QuickAddButton 
-            value={20} 
+            value={12} 
             unit="g eggs" 
-            onClick={(value) => addProtein(value, 'Eggs')}
+            onClick={(value) => addProtein(value, '2 Eggs')}
+            variant="protein"
+          />
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          <QuickAddButton 
+            value={20} 
+            unit="g yogurt" 
+            onClick={(value) => addProtein(value, 'Greek yogurt (200g)')}
+            variant="protein"
+          />
+          <QuickAddButton 
+            value={25} 
+            unit="g salmon" 
+            onClick={(value) => addProtein(value, 'Salmon (100g)')}
+            variant="protein"
+          />
+          <QuickAddButton 
+            value={18} 
+            unit="g paneer" 
+            onClick={(value) => addProtein(value, 'Paneer (100g)')}
+            variant="protein"
+          />
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          <QuickAddButton 
+            value={52} 
+            unit="g soya" 
+            onClick={(value) => addProtein(value, 'Soya chunks (100g)')}
+            variant="protein"
+          />
+          <QuickAddButton 
+            value={11} 
+            unit="g cottage" 
+            onClick={(value) => addProtein(value, 'Cottage cheese (100g)')}
+            variant="protein"
+          />
+          <QuickAddButton 
+            value={19} 
+            unit="g chickpeas" 
+            onClick={(value) => addProtein(value, 'Chickpeas (100g)')}
             variant="protein"
           />
         </div>
