@@ -94,10 +94,6 @@ export const GymCalendar = () => {
 
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Gym Attendance</h1>
-        <p className="text-muted-foreground">Track your fitness journey</p>
-      </div>
 
       {/* Monthly Stats */}
       <div className="grid grid-cols-3 gap-4">

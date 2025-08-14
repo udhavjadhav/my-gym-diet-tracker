@@ -47,7 +47,7 @@ const Index = () => {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border">
+      <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border z-[5000]">
         <div className="max-w-md mx-auto">
           <div className="grid grid-cols-5 gap-1">
             <NavButton 

@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useLocalStorage } from "@/hooks/useStorage";
 import { WorkoutTemplate, WorkoutSession, Exercise, CompletedExercise } from "@/types/fitness";
-import { Dumbbell, Plus, Edit3, Save, Play, CheckCircle, Calendar, ArrowLeft, Target, Clock, TrendingUp } from "lucide-react";
+import { Dumbbell, Plus, Edit3, Save, Play, CheckCircle, Calendar, ArrowLeft, Target, Clock, TrendingUp, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { GymCalendar } from "@/components/GymCalendar";
@@ -234,6 +234,17 @@ export const WorkoutTracker = () => {
     ));
   };
 
+  const removeExercise = (templateId: string, exerciseId: string) => {
+    setWorkoutTemplates(prev => prev.map(template => 
+      template.id === templateId 
+        ? {
+            ...template,
+            exercises: template.exercises.filter(ex => ex.id !== exerciseId)
+          }
+        : template
+    ));
+  };
+
   if (activeWorkout) {
     return (
       <div className="space-y-6">
@@ -451,24 +462,38 @@ export const WorkoutTracker = () => {
                 {editingTemplate === template.id && (
                   <div className="space-y-3 mt-4 border-t border-border pt-4">
                     {template.exercises.map((exercise) => (
-                      <div key={exercise.id} className="grid grid-cols-2 gap-2">
-                        <Input
-                          value={exercise.name}
-                          onChange={(e) => updateExercise(template.id, exercise.id, { name: e.target.value })}
-                          placeholder="Exercise name"
-                          className="col-span-2"
-                        />
-                        <Input
-                          type="number"
-                          value={exercise.sets}
-                          onChange={(e) => updateExercise(template.id, exercise.id, { sets: parseInt(e.target.value) || 0 })}
-                          placeholder="Sets"
-                        />
-                        <Input
-                          value={exercise.reps}
-                          onChange={(e) => updateExercise(template.id, exercise.id, { reps: e.target.value })}
-                          placeholder="Reps"
-                        />
+                      <div key={exercise.id} className="space-y-2">
+                        <div className="grid grid-cols-2 gap-2">
+                          <Input
+                            value={exercise.name}
+                            onChange={(e) => updateExercise(template.id, exercise.id, { name: e.target.value })}
+                            placeholder="Exercise name"
+                            className="col-span-2"
+                            onFocus={(e) => e.target.select()}
+                          />
+                          <Input
+                            type="number"
+                            value={exercise.sets}
+                            onChange={(e) => updateExercise(template.id, exercise.id, { sets: parseInt(e.target.value) || 0 })}
+                            placeholder="Sets"
+                            onFocus={(e) => e.target.select()}
+                          />
+                          <Input
+                            value={exercise.reps}
+                            onChange={(e) => updateExercise(template.id, exercise.id, { reps: e.target.value })}
+                            placeholder="Reps"
+                            onFocus={(e) => e.target.select()}
+                          />
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => removeExercise(template.id, exercise.id)}
+                          className="w-full text-destructive hover:text-destructive-foreground hover:bg-destructive"
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Remove Exercise
+                        </Button>
                       </div>
                     ))}
                     
