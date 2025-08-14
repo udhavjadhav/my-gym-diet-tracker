@@ -3,9 +3,11 @@ import { useLocalStorage } from "@/hooks/useStorage";
 import { WaterLog, ProteinLog, MealLog, UserSettings, WorkoutSession } from "@/types/fitness";
 import { Droplets, Zap, Utensils, Dumbbell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import gymHero from "@/assets/gym-hero.jpg";
 
 export const Dashboard = () => {
+  const navigate = useNavigate();
   const [waterLogs, setWaterLogs] = useLocalStorage<WaterLog[]>('waterLogs', []);
   const [proteinLogs, setProteinLogs] = useLocalStorage<ProteinLog[]>('proteinLogs', []);
   const [mealLogs] = useLocalStorage<MealLog[]>('mealLogs', []);
@@ -93,6 +95,7 @@ export const Dashboard = () => {
           unit="ml"
           color="water"
           icon={<Droplets className="w-4 h-4" />}
+          onClick={() => navigate('/water-history')}
         />
         
         <StatCard
@@ -102,6 +105,7 @@ export const Dashboard = () => {
           unit="grams"
           color="protein"
           icon={<Zap className="w-4 h-4" />}
+          onClick={() => navigate('/protein-history')}
         />
         
         <StatCard
@@ -111,6 +115,7 @@ export const Dashboard = () => {
           unit="kcal"
           color="calories"
           icon={<Utensils className="w-4 h-4" />}
+          onClick={() => navigate('/calories-history')}
         />
         
         <StatCard
@@ -120,6 +125,7 @@ export const Dashboard = () => {
           unit="sessions"
           color="workout"
           icon={<Dumbbell className="w-4 h-4" />}
+          onClick={() => navigate('/workout-history')}
         />
       </div>
 

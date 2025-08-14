@@ -10,6 +10,7 @@ interface StatCardProps {
   color: 'water' | 'protein' | 'calories' | 'workout';
   icon?: React.ReactNode;
   className?: string;
+  onClick?: () => void;
 }
 
 export const StatCard = ({ 
@@ -19,12 +20,20 @@ export const StatCard = ({
   unit, 
   color, 
   icon,
-  className 
+  className,
+  onClick 
 }: StatCardProps) => {
   const percentage = goal > 0 ? Math.min((current / goal) * 100, 100) : 0;
 
   return (
-    <Card className={cn("p-6 bg-gradient-to-br from-card to-secondary border-border/50", className)}>
+    <Card 
+      className={cn(
+        "p-6 bg-gradient-to-br from-card to-secondary border-border/50 transition-all duration-200", 
+        onClick && "cursor-pointer hover:shadow-lg hover:scale-[1.02]",
+        className
+      )}
+      onClick={onClick}
+    >
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
         {icon && <div className="text-muted-foreground">{icon}</div>}
